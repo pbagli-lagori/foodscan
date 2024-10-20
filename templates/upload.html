@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Image</title>
+</head>
+<body>
+    <h2>Upload an Image</h2>
+    <form method="POST" enctype="multipart/form-data" action="/upload">
+        <label for="file">Choose an image:</label><br>
+        <input type="file" id="file" name="file" accept="image/*" required><br><br>
+        
+        <input type="submit" value="Upload">
+    </form>
+    <br>
+    <a href="/logout">Logout</a>
+</body>
+</html>
