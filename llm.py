@@ -1,21 +1,60 @@
 import base64
 import vertexai
+import json
 from vertexai.generative_models import GenerativeModel, Part, SafetySetting
 
+inputprompt = """You are given an image containing multiple food products. Your task is to extract the text associated with each product, such as product name and its contents. 
+The output should be in the following format:
+[
+  {
+    "product name": "Name of the product", 
+    "content": {
+      "content name": "value"
+    }
+  },
+  {
+    "product name": "Name of the product", 
+    "content": {
+      "content name": "value"
+    }
+  }
+  ...
+]
+
+Here are some instructions:
+- Each food product might have multiple contents (like ingredients, nutritional information, etc.), so ensure you capture all available text.
+- Structure the information under "content" for each product clearly.
+- If a content name or value is missing, exclude that field for the product.
+- Present each product separately in a list format, even if multiple products share common contents."""
 
 def generate(image, generation_config, safety_settings ):
     vertexai.init(project="sgtest-414906", location="us-central1")
     model = GenerativeModel(
         "gemini-1.5-flash-001",
     )
+    print("generating content")
     responses = model.generate_content(
-        [image, """extract the text from the image"""],
+        [image, """Read the text in this image."""],
+        generation_config=generation_config,
+        safety_settings=safety_settings,
+        stream=False,
+    )
+    print("content generated")
+    return responses
+
+
+def parse_text(text, generation_config, safety_settings):
+    vertexai.init(project="sgtest-414906", location="us-central1")
+    model = GenerativeModel(
+        "gemini-1.5-flash-002",
+    )
+    responses = model.generate_content(
+        [text],
         generation_config=generation_config,
         safety_settings=safety_settings,
         stream=True,
     )
     return responses
-
 
 def llm_generate(image):
     image = Part.from_data(
@@ -48,4 +87,13 @@ def llm_generate(image):
     ]
 
     responses = generate(image, generation_config, safety_settings)
-    return responses
+    # parsed_text = parse_text(responses, generation_config, safety_settings)
+    results=[]
+    # print(json.dumps(responses))
+    print("length of responses")
+    print(len(responses))
+    for data in responses:
+        print(data.text, end="")
+        results.append(data.text)
+    
+    return results

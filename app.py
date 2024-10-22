@@ -70,6 +70,7 @@ def upload_image():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             extracted_text = extract_text_from_image(file_path)
+            
             print("extracted text")
             result_string = ""
             for extracts in extracted_text:
