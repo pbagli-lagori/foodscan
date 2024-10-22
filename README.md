@@ -1,0 +1,2 @@
+# foodscan
+demo project
