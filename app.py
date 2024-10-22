@@ -70,13 +70,11 @@ def upload_image():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             extracted_text = extract_text_from_image(file_path)
-            
             print("extracted text")
             result_string = ""
-            for extracts in extracted_text:
-                result_string += extracts.text + "\n"
+            # for extracts in extracted_text:
+            #     result_string += extracts.text + "\n"
             return render_template('result.html', text=result_string)
-    
     return render_template('upload.html')
 
 # Function to simulate the LLM or use pytesseract for OCR
@@ -85,7 +83,6 @@ def extract_text_from_image(image_path):
         with open(image_path, "rb") as image_file:
             image_bytes = image_file.read()
         text = llm.llm_generate(image_bytes)
-        
         return text
     except IOError:
         return "File error: Unable to open the image file."
@@ -107,5 +104,4 @@ if __name__ == '__main__':
     # Ensure upload folder exists
     if not os.path.exists(app.config['UPLOAD_FOLDER']):
         os.makedirs(app.config['UPLOAD_FOLDER'])
-    
     app.run(debug=True)
