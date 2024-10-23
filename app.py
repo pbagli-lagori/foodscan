@@ -71,7 +71,7 @@ def upload_image():
             file.save(file_path)
             extracted_text = extract_text_from_image(file_path)
             print("extracted text")
-            result_string = ""
+            result_string = extracted_text.text
             # for extracts in extracted_text:
             #     result_string += extracts.text + "\n"
             return render_template('result.html', text=result_string)

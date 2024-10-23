@@ -8,14 +8,15 @@ def generate(image, generation_config, safety_settings ):
     model = GenerativeModel(
         "gemini-1.5-flash-001",
     )
-    print("generating content")
+    print("****generating content****")
     responses = model.generate_content(
         [image, """Read the text in this image."""],
         generation_config=generation_config,
         safety_settings=safety_settings,
         stream=False,
     )
-    print("content generated")
+    print(responses.text)
+    print("****content generated****")
     return responses
 
 
@@ -49,5 +50,4 @@ def llm_generate(image):
         ),
     ]
     responses = generate(image, generation_config, safety_settings)
-    print(responses.text)
     return responses
