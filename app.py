@@ -54,43 +54,33 @@ def login():
 @login_required
 def upload_image():
     if request.method == 'POST':
-        # Check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        
-        # If user does not select file, browser also submits an empty part without filename
+
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
-        
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            extracted_text = extract_text_from_image(file_path)
-            print("extracted text")
-            result_string = extracted_text.text
-            # for extracts in extracted_text:
-            #     result_string += extracts.text + "\n"
-            return render_template('result.html', text=result_string)
+            extracted_text = process_image(file_path)
+            # result_string = ""
+            return render_template('result.html', text=extracted_text)
     return render_template('upload.html')
-
 # Function to simulate the LLM or use pytesseract for OCR
-def extract_text_from_image(image_path):
+
+def process_image(image_path):
     try:
         with open(image_path, "rb") as image_file:
             image_bytes = image_file.read()
-        text = llm.llm_generate(image_bytes)
+        text = llm.llm_process(image_bytes)
         return text
-    except IOError:
-        return "File error: Unable to open the image file."
-    except pytesseract.TesseractError:
-        return "OCR error: Tesseract failed to process the image."
     except Exception as e:
         return f"Unexpected error: {str(e)}"
-
 
 # Route: Logout
 @app.route('/logout')
